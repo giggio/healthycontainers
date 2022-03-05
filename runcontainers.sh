@@ -2,10 +2,12 @@
 
 set -euo pipefail
 
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-docker build -t giggio/healthy -f $DIR/Dockerfile.healthy $DIR
-docker build -t giggio/unhealthy -f $DIR/Dockerfile.unhealthy $DIR
 docker rm -f healthy || true
 docker rm -f unhealthy || true
-docker run -d --name healthy giggio/healthy
-docker run -d --name unhealthy giggio/unhealthy
+docker rm -f nohealthinfo || true
+
+docker run -d --name healthy   --health-interval 3s --health-timeout 2s                     \
+  --health-start-period 1ms --health-cmd true  --entrypoint sleep alpine:3 infinity
+docker run -d --name unhealthy --health-interval 1s --health-timeout 1ms --health-retries 1 \
+  --health-start-period 1ms --health-cmd false --entrypoint sleep alpine:3 infinity
+docker run -d --name nohealthinfo --entrypoint sleep alpine:3 infinity

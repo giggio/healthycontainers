@@ -1,3 +1,0 @@
-FROM alpine:3
-HEALTHCHECK --interval=1s --timeout=1ms --retries=1 --start-period=1ms CMD [ "false" ]
-ENTRYPOINT [ "sleep", "infinity" ]
